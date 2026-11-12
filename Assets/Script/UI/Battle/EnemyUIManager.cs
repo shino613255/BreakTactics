@@ -1,0 +1,84 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EnemyUIManager : MonoBehaviour
+{
+    [SerializeField] private Transform effectIconContainer;
+    [SerializeField] private Image effectIconPrefab;
+
+    [SerializeField] private Sprite burnIcon;
+    [SerializeField] private Sprite frozenIcon;
+    [SerializeField] private Sprite defenseUpIcon;
+    [SerializeField] private Sprite magicDefenseUpIcon;
+
+    public Slider hpSlider;
+    public Text nameText;
+
+    public void SetupUI(EnemyManager enemy)
+    {
+        hpSlider.minValue = 0;
+        hpSlider.maxValue = enemy.maxHp;
+        hpSlider.value = enemy.hp;
+
+        nameText.text = enemy.data.enemyName;
+
+        RefreshEffectIcons(enemy);
+    }
+
+    public void UpdateUI(EnemyManager enemy)
+    {
+        hpSlider.value = enemy.hp;
+
+        nameText.text = enemy.data.enemyName;
+
+        RefreshEffectIcons(enemy);
+    }
+
+    private void RefreshEffectIcons(EnemyManager enemy)
+    {
+        if (effectIconContainer == null || effectIconPrefab == null)
+            return;
+
+        // 状態異常・バフの変化を反映するため、既存アイコンを作り直す
+        for (int i = effectIconContainer.childCount - 1; i >= 0; i--)
+        {
+            Destroy(effectIconContainer.GetChild(i).gameObject);
+        }
+
+        if (enemy == null)
+            return;
+
+        if (enemy.IsBurning)
+        {
+            CreateEffectIcon(burnIcon);
+        }
+
+        if (enemy.IsFrozen)
+        {
+            CreateEffectIcon(frozenIcon);
+        }
+
+        if (enemy.IsDefenseBuffed)
+        {
+            CreateEffectIcon(defenseUpIcon);
+        }
+
+        if (enemy.IsMagicDefenseBuffed)
+        {
+            CreateEffectIcon(magicDefenseUpIcon);
+        }
+    }
+
+    private void CreateEffectIcon(Sprite sprite)
+    {
+        if (sprite == null)
+            return;
+
+        Image icon =
+            Instantiate(effectIconPrefab, effectIconContainer);
+
+        icon.sprite = sprite;
+    }
+}

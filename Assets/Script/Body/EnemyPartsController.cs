@@ -1,0 +1,63 @@
+using UnityEngine;
+
+public class EnemyPartsController : MonoBehaviour
+{
+    private EnemyManager enemy;
+    private BodyPart selectedPart;
+
+    private void Awake()
+    {
+        if (enemy == null)
+        {
+            enemy = GetComponent<EnemyManager>();
+        }
+    }
+
+    public void SetSelectedPart(BodyPart part)
+    {
+        selectedPart = part;
+    }
+
+    public struct AttackResult
+    {
+        public int mainDamage;
+        public int partDamage;
+        public float damageMultiplier;
+    }
+
+    public AttackResult ApplyAttack(AttackContext ctx)
+    {
+        AttackResult result = new AttackResult
+        {
+            damageMultiplier = 1f
+        };
+        if (enemy == null)
+        {
+            return result;
+        }
+
+        if (ctx.baseDamage <= 0)
+        {
+            return result;
+        }
+
+        if (enemy.data != null && selectedPart != null)
+        {
+            SkillType attackType = ctx.sourceSkill != null ? ctx.sourceSkill.skillType : SkillType.Physical;
+            result.damageMultiplier = enemy.data.GetPartDamageMultiplier(selectedPart.partType, attackType);
+        }
+
+        float adjustedDamage = ctx.baseDamage * result.damageMultiplier;
+        result.mainDamage = Mathf.RoundToInt(adjustedDamage * ctx.mainDamageRate);
+        result.mainDamage = enemy.TakeDirectDamage(result.mainDamage);
+        if (selectedPart != null)
+        {
+            int calculatedPartDamage = Mathf.RoundToInt(
+                adjustedDamage * ctx.partDamageRate *
+                (ctx.preparedPartDamageMultiplier > 0f ? ctx.preparedPartDamageMultiplier : 1f));
+            result.partDamage = selectedPart.TakePartDamage(calculatedPartDamage);
+        }
+
+        return result;
+    }
+}

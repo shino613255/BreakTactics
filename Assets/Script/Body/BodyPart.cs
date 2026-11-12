@@ -1,0 +1,270 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+public enum PartType
+{
+    Face,
+    Belly,
+    Hand,
+    Leg
+}
+
+public class BodyPart : MonoBehaviour
+{
+    [Header("Highlight")]
+    [SerializeField] private SpriteRenderer highlight;                      
+
+    [Header("Part Settings")]
+    public PartType partType;                                               
+    public bool canBreak = true;                                            
+
+    [Header("Part HP")]
+    [Min(1)] public int maxPartHp = 30;                                     
+    private int partHp;
+
+    [Header("Collider View")]
+    [SerializeField] private float colliderLineWidth = 0.03f;
+
+    private LineRenderer colliderLine;
+    private PolygonCollider2D partCollider;
+
+    public bool IsBroken => canBreak && partHp <= 0;
+
+    private void Awake()
+    {
+        partHp = maxPartHp;
+
+        if (highlight == null)
+            highlight = GetComponent<SpriteRenderer>();
+
+        if (highlight != null)
+            highlight.enabled = false;
+
+        partCollider = GetComponent<PolygonCollider2D>();
+
+        CreateColliderLine();
+
+        if (colliderLine != null)
+            colliderLine.enabled = false;
+    }
+
+    private void CreateColliderLine()
+    {
+        if (partCollider == null)
+        {
+            Debug.LogWarning(
+                $"{GetPartNameJP()} に PolygonCollider2D がありません"
+            );
+            return;
+        }
+
+        GameObject lineObject =
+            new GameObject("ColliderView");
+
+        lineObject.transform.SetParent(
+            transform,
+            false
+        );
+
+        colliderLine =
+            lineObject.AddComponent<LineRenderer>();
+
+        colliderLine.useWorldSpace = false;
+
+        colliderLine.loop = true;
+
+        colliderLine.startWidth = colliderLineWidth;
+        colliderLine.endWidth = colliderLineWidth;
+
+        colliderLine.material =
+            new Material(
+                Shader.Find("Sprites/Default")
+            );
+
+        colliderLine.sortingOrder = 100;
+
+        UpdateColliderLine();
+    }
+
+
+    private void UpdateColliderLine()
+    {
+        if (
+            colliderLine == null ||
+            partCollider == null
+        )
+            return;
+
+        Vector2[] points =
+            partCollider.GetPath(0);
+
+        colliderLine.positionCount =
+            points.Length;
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            colliderLine.SetPosition(
+                i,
+                new Vector3(
+                    points[i].x,
+                    points[i].y,
+                    0f
+                )
+            );
+        }
+
+        switch (partType)
+        {
+            case PartType.Face:
+                colliderLine.startColor =
+                    new Color(1f, 0.2f, 0.2f, 1f);
+
+                colliderLine.endColor =
+                    new Color(1f, 0.2f, 0.2f, 1f);
+                break;
+
+            case PartType.Belly:
+                colliderLine.startColor =
+                    new Color(1f, 0.85f, 0.2f, 1f);
+
+                colliderLine.endColor =
+                    new Color(1f, 0.85f, 0.2f, 1f);
+                break;
+
+            case PartType.Hand:
+                colliderLine.startColor =
+                    new Color(0.2f, 0.5f, 1f, 1f);
+
+                colliderLine.endColor =
+                    new Color(0.2f, 0.5f, 1f, 1f);
+                break;
+
+            case PartType.Leg:
+                colliderLine.startColor =
+                    new Color(0.2f, 1f, 0.4f, 1f);
+
+                colliderLine.endColor =
+                    new Color(0.2f, 1f, 0.4f, 1f);
+                break;
+        }
+    }
+
+    public string GetPartNameJP()                                           
+    {
+        switch (partType)
+        {
+            case PartType.Face: return "顔";
+            case PartType.Belly: return "腹";
+            case PartType.Hand: return "手";
+            case PartType.Leg: return "脚";            
+            default: return partType.ToString();
+        }
+    }
+
+    private bool isSelected = false;
+    private bool isPartViewVisible = false;
+
+
+    public void SetSelectedVisual(bool selected)
+    {
+        isSelected = selected;
+        RefreshVisual();
+    }
+
+
+    public void SetPartViewVisible(bool visible)
+    {
+        isPartViewVisible = visible;
+
+        if (colliderLine != null)
+        {
+            colliderLine.enabled = visible;
+        }
+
+        RefreshVisual();
+    }
+
+
+    private void RefreshVisual()
+    {
+        if (highlight == null)
+            return;
+
+        highlight.enabled =
+            isSelected || isPartViewVisible;
+
+        if (!highlight.enabled)
+            return;
+
+        // 選択中は部位種別に関係なく白く表示する
+        if (isSelected)
+        {
+            highlight.color = new Color(1f, 1f, 1f, 0.7f);
+            return;
+        }
+
+        // 部位確認モード
+        switch (partType)
+        {
+            case PartType.Face:
+                highlight.color =
+                    new Color(1f, 0.2f, 0.2f, 1f);
+                break;
+
+            case PartType.Belly:
+                highlight.color =
+                    new Color(1f, 0.85f, 0.2f, 0.45f);
+                break;
+
+            case PartType.Hand:
+                highlight.color =
+                    new Color(0.2f, 0.5f, 1f, 0.45f);
+                break;
+
+            case PartType.Leg:
+                highlight.color =
+                    new Color(0.2f, 1f, 0.4f, 0.45f);
+                break;
+        }
+    }
+    public int TakePartDamage(int damage)                                   
+    {
+        if (damage <= 0) return 0;
+        if (IsBroken) return 0;                                             
+
+        int before = partHp;                                                
+        partHp -= damage;
+
+        // 破壊不可部位はHPが0にならないよう最低1を維持する
+        if (!canBreak)
+        {
+            if (partHp <= 0) partHp = 1;
+            Debug.Log($"[BodyPart] {GetPartNameJP()} の部位HP: {before} → {partHp}");
+            return before - partHp;
+        }
+
+        if (partHp <= 0)
+        {
+            partHp = 0;
+            OnBroken();
+        }
+
+        Debug.Log($"[BodyPart] {GetPartNameJP()} の部位HP: {before} → {partHp}");
+        return before - partHp;
+    }
+
+    private void OnBroken()                                                 
+    {
+        var enemy = GetComponentInParent<EnemyManager>();                   
+        if (enemy == null) return;
+
+        enemy.OnPartBroken(partType);
+    }
+    private void OnValidate()
+    {
+        if (maxPartHp < 1) maxPartHp = 1;
+
+        // 腹部は破壊対象ではない仕様のため、Inspector上でも破壊不可に固定する
+        if (partType == PartType.Belly) canBreak = false;                   
+    }
+}
