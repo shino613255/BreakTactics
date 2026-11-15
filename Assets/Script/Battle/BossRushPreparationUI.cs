@@ -190,6 +190,9 @@ public sealed class BossRushPreparationUI : MonoBehaviour
                 continue;
             }
 
+            // 追加
+            card.button.interactable = draftPlayer != null;
+
             card.title.text = skill.skillName;
             card.description.text = skill.description;
             card.cost.text = $"MP {skill.mpCost}   CD {skill.cooldown}";

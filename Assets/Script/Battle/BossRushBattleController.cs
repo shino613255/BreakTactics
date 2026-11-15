@@ -16,7 +16,6 @@ public sealed class BossRushBattleController : MonoBehaviour
     }
 
     [SerializeField] private BattleManager battleManager;
-    [SerializeField] private EnemyData enemyData;
 
     // 追加
     [SerializeField] private BossRushPreparationUI preparationUI;
@@ -36,6 +35,10 @@ public sealed class BossRushBattleController : MonoBehaviour
     internal IReadOnlyList<ClassOption> ClassOptions => classOptions;
     internal IReadOnlyList<SkillData> CommonSkills => commonSkills;
 
+    // 追加
+    public event Action BattleStarted;
+    public event Action<BattleResult> BattleResolved;
+
     private void OnEnable()
     {
         if (battleManager != null)
@@ -52,11 +55,6 @@ public sealed class BossRushBattleController : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        // 追加
-        OpenPreparation(enemyData);
-    }
 
     // 追加
     public bool OpenPreparation(EnemyData encounter)
@@ -73,6 +71,12 @@ public sealed class BossRushBattleController : MonoBehaviour
         }
 
         pendingEnemy = encounter;
+        // 追加
+        if (DialogTextManager.instance != null)
+        {
+            DialogTextManager.instance.Clear();
+        }
+
         preparationUI.Show();
         return true;
     }
@@ -133,15 +137,27 @@ public sealed class BossRushBattleController : MonoBehaviour
         enemy.Setup(encounter);
         battleManager.Setup(enemy);
         Debug.Log($"職業「{CurrentPlayer.playerName}」で戦闘を開始しました。職業変更の残り回数は{RemainingClassChanges}回です。", this);
+
+        // 追加
+        BattleStarted?.Invoke();
         return true;
     }
 
     private void OnBattleFinished(BattleResult result)
     {
         // 追加
+        if (!run.IsInBattle)
+        {
+            return;
+        }
+
+        // 追加
         run.FinishBattle();
 
         SoundManager.instance.StopBGM();
         Debug.Log($"ボスラッシュの戦闘結果：{(result == BattleResult.Victory ? "勝利" : "敗北")}", this);
+
+        // 追加
+        BattleResolved?.Invoke(result);
     }
 }

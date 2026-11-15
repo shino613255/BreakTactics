@@ -129,6 +129,22 @@ public class DialogTextManager : MonoBehaviour
         SetNextLine();
     }
 
+    // ’Ç‰Á
+    public void Clear()
+    {
+        displayVersion++;
+        scenarios = Array.Empty<string>();
+        currentLine = 0;
+        currentText = string.Empty;
+        timeUntilDisplay = 0;
+        timeElapsed = Time.time;
+        lastUpdateCharacter = -1;
+        lastAdvanceFrame = -1;
+        lastAdvanceReleaseFrame = -1;
+        isAdvancePointerHeld = false;
+        uiText.text = string.Empty;
+    }
+
     public IEnumerator ShowAndWait(
         string message,
         float waitSeconds

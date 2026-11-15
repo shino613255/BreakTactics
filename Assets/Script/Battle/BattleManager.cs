@@ -119,7 +119,6 @@ public class BattleManager : MonoBehaviour
         isBattleRunning = true;
         ResetActionState();
         ClearBattleEffects();
-        ResetPlayerBattleState();
         skillButton.SetActive(true);
         playerStatusPanel.SetActive(true);
         playerInputBlockedThroughFrame = Time.frameCount;

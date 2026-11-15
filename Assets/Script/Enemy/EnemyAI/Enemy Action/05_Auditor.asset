@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d36da0d7caa2ec4ebf0fe0a29640db7, type: 3}
-  m_Name: Auditor
+  m_Name: 05_Auditor
   m_EditorClassIdentifier: 
   enemyName: "\u9B54\u5C0E\u76E3\u5BDF\u5B98"
   icon: {fileID: 21300000, guid: f1145c6ce61efa240a39349e31772ad6, type: 3}
@@ -30,8 +30,7 @@ MonoBehaviour:
   skillList:
   - {fileID: 11400000, guid: d9ff7d3455d0c7b4c915b03e0324ef5b, type: 2}
   - {fileID: 11400000, guid: ce25de1311756d74cbea4bb7f7cef9d1, type: 2}
-  - {fileID: 11400000, guid: c0558632039f8fe4a925ed7e2ef73f9d, type: 2}
-  AnnouncementSkillName: {fileID: 11400000, guid: ce25de1311756d74cbea4bb7f7cef9d1, type: 2}
+  telegraphedSkill: {fileID: 11400000, guid: ce25de1311756d74cbea4bb7f7cef9d1, type: 2}
   enableStagger: 0
   staggerWeakPoint: 0
   staggerGaugeMax: 100

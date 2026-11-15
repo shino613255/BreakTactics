@@ -318,6 +318,9 @@ public class EnemyManager : UnitBase
         }
     }
 
+    // 追加
+    private bool initialized;
+
     public void Setup(EnemyData enemyData)
     {
         BattleEffects.Reset();
@@ -328,6 +331,12 @@ public class EnemyManager : UnitBase
 
     private void Start()
     {
+        // 追加
+        if (initialized)
+        {
+            return;
+        }
+
         if (data == null)
         {
             Debug.LogError($"EnemyData が未設定ですわ！ object={gameObject.name}", this);
@@ -350,6 +359,9 @@ public class EnemyManager : UnitBase
         mdef = data.mdef;
         evasionRate = data.evasionRate;
         damageEffect = data.damageEffect;
+
+        // 追加
+        initialized = true;
     }
 
     public void SetPartViewVisible(bool visible)

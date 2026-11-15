@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d36da0d7caa2ec4ebf0fe0a29640db7, type: 3}
-  m_Name: Raider
+  m_Name: 07_Raider
   m_EditorClassIdentifier: 
   enemyName: "\u8840\u65A7\u306E\u7565\u596A\u8005"
   icon: {fileID: 21300000, guid: 659e6b87b66a65944a07bb98f2a1e6bb, type: 3}
@@ -30,8 +30,7 @@ MonoBehaviour:
   skillList:
   - {fileID: 11400000, guid: 898d87e7b857f4344b8799b8d4544213, type: 2}
   - {fileID: 11400000, guid: f547bdd59dd8a394ba01ebed5bfab16e, type: 2}
-  - {fileID: 11400000, guid: d9b88481ba491fc4cadc64da1376ce80, type: 2}
-  AnnouncementSkillName: {fileID: 11400000, guid: f547bdd59dd8a394ba01ebed5bfab16e, type: 2}
+  telegraphedSkill: {fileID: 11400000, guid: f547bdd59dd8a394ba01ebed5bfab16e, type: 2}
   enableStagger: 0
   staggerWeakPoint: 0
   staggerGaugeMax: 100
