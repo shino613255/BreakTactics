@@ -374,6 +374,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+        // 狙いなどは攻撃を試みた時点で消費するため、命中判定より先に反映する
         SkillExecutor.PreparePlayerAttack(player, ref ctx);
         waitingTap = false;
         isPlayerTurn = false;
@@ -474,6 +475,7 @@ public class BattleManager : MonoBehaviour
 
     private int ApplyCounterDamage(int hpBefore)
     {
+        // 反射は実際に減った本体HPを基準にし、ガードの対象外として扱う
         int reflectedDamage = enemy.GetCounterDamage(Mathf.Max(0, hpBefore - enemy.hp));
         if (reflectedDamage > 0)
         {
@@ -500,6 +502,7 @@ public class BattleManager : MonoBehaviour
     {
         if (useSelectedSkill && selectedPlayerSkill != null)
         {
+            // スキル選択時は予約だけにして、攻撃する部位が決まってからコストを支払う
             if (!SkillUseRules.TryPay(player, enemy, selectedPlayerSkill, out string useError))
             {
                 ShowPlayerChoiceMessage(useError);
@@ -693,6 +696,7 @@ public class BattleManager : MonoBehaviour
 
     private void PrepareEnemyAction()
     {
+        // 構え中の技を保持し、次のプレイヤーターンで同じ技を予告し直す
         if (enemyActionPlan.isReady && enemyActionPlan.enemy == enemy && enemyActionPlan.remainingChargeTurns > 0)
         {
             enemyActionPlan.isTelegraphed = false;
@@ -719,6 +723,7 @@ public class BattleManager : MonoBehaviour
         enemyActionPlan = new EnemyActionPlan
         {
             enemy = enemy,
+            // 敵のクールダウンが1ターン進んだ後に使用できる技を予告する
             skill = enemyAI.ChooseSkill(enemy, 1),
             isReady = true
         };
@@ -736,6 +741,7 @@ public class BattleManager : MonoBehaviour
 
     private bool TryInterruptEnemyAction(BodyPart part, bool justBroken)
     {
+        // 破壊済みの手を再攻撃しても妨害を繰り返せないようにする
         if (!justBroken || 
             part == null || 
             part.partType != PartType.Hand ||
@@ -869,8 +875,21 @@ public class BattleManager : MonoBehaviour
         RemoveEnemy();
     }
 
+    #if UNITY_EDITOR
+    public void DebugKillEnemy()
+    {        
+        if (!CanReceivePlayerInput() || !waitingTap)
+        {
+            return;
+        }
+
+        enemy.TakeDamageRaw(enemy.hp);
+    }
+    #endif
+
     private IEnumerator BattleLoop()
     {
+
         while (CombatantsAlive)
         {
             player.BattleEffects.BeginPlayerTurn();
@@ -927,6 +946,7 @@ public class BattleManager : MonoBehaviour
         isPlayerTurn = false;
         waitingTap = true;
         playerActionMessages = null;
+        // 脚破壊で増えた行動は同じターンなので、毒は最初の行動だけで進める
         int poisonDamage = isFirstActionOfTurn ? player.TickPoisonDamage() : 0;
         if (poisonDamage > 0)
         {
@@ -1090,6 +1110,7 @@ public class BattleManager : MonoBehaviour
             }
         }
 
+        // 予告後の部位破壊で予約技が封印された場合は、敵の行動ごと中断する
         if (isBossHeavyAction && TankBossRoleAction.GetSealedSkills(enemy).Contains(skill))
         {
             isInterrupted = true;

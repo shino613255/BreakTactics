@@ -33,8 +33,7 @@ public class TankRoleAction : IEnemyRoleAction
                 s.skillType == SkillType.Heal
             );
 
-        // 現在のプレイヤーは魔法攻撃主体のためDefenseUpは優先しない。
-        // 物理攻撃主体のプレイヤー追加後に再導入予定。
+        // 通常タンクの防御バフ選択は魔法防御に限定する
 
         if (
             !enemy.IsMagicDefenseBuffed &&
@@ -44,7 +43,6 @@ public class TankRoleAction : IEnemyRoleAction
             return magicDefenseSkill;
         }
 
-        // Tank型は低HP時のみ回復を選択肢に入れる
         float hpRate =
             (float)enemy.hp / enemy.maxHp;
 

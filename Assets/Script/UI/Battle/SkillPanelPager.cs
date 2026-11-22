@@ -64,6 +64,7 @@ public class SkillPanelPager : MonoBehaviour
         page = Mathf.Clamp(page, 0, PageCount - 1);
         for (int i = 0; i < slots.Length; i++)
         {
+            // ページ間でボタンを使い回すため、最終ページの余り枠には空データを渡す
             int index = page * slots.Length + i;
             slots[i].SetSkill(index < player.Skills.Count ? player.Skills[index] : null, player);
         }

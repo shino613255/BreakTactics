@@ -46,6 +46,7 @@ public class TankBossRoleAction : IEnemyRoleAction
         SkillData heavyAttack = pool.Find(skill =>
             skill == enemy.data.AnnouncementSkillName &&
             skill.skillType == SkillType.Physical);
+        // 重撃は必ず構えを経由させるため、通常の候補から外す
         pool = pool.FindAll(skill => skill != enemy.data.AnnouncementSkillName);
 
         if (allowHeavyAttackStance && pendingHeavyAttack != null)
@@ -57,7 +58,7 @@ public class TankBossRoleAction : IEnemyRoleAction
                     s.statusEffect.type == StatusEffectType.Poison)
                 : null;
 
-        // Boss専用ギミックはHP50%以下で1度だけ発動する
+        // HP半分以下の専用行動は、使える候補が見つかったときに使用済みにする
         if (
             hpRate <= 0.5f &&
             !bossGimmickUsed
@@ -127,6 +128,7 @@ public class TankBossRoleAction : IEnemyRoleAction
         if (allowHeavyAttackStance && heavyAttackUnlocked && heavyAttack != null &&
             enemy.IsAlive && player != null && player.IsAlive)
         {
+            // 重撃の構えを後回しにできるのは一度だけ
             if (fallbackSkill != null && !heavyAttackDeferred)
             {
                 heavyAttackDeferred = true;

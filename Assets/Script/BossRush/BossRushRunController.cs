@@ -85,7 +85,8 @@ public sealed class BossRushRunController : MonoBehaviour
     private static bool TrySelectOpponents(EnemyData[] candidates, out EnemyData[] selected, out string error)
     {
         selected = null;
-        if (candidates == null || candidates.Length < BattleCount)
+        if (candidates == null || 
+            candidates.Length < BattleCount)
         {
             error = $"敵候補を{BattleCount}体以上設定してください。";
             return false;
@@ -120,6 +121,7 @@ public sealed class BossRushRunController : MonoBehaviour
         {
             int index = Random.Range(0, available.Count);
             selected[i] = available[index];
+            // 同じ敵が今回の挑戦で再び選ばれないよう、抽選済みの候補を外す
             available.RemoveAt(index);
         }
 
@@ -129,6 +131,7 @@ public sealed class BossRushRunController : MonoBehaviour
 
     private void ShowPreparation()
     {
+        // 勝利済みの敵を飛ばし、まだ戦っていない先頭の敵を選ぶ
         EnemyData opponent = opponents[Victories];
         encounterPreview.text = $"第 {CurrentBattleNumber} / {BattleCount} 戦\n対戦相手  {opponent.enemyName}";
         phase = Phase.Preparing;
@@ -148,6 +151,7 @@ public sealed class BossRushRunController : MonoBehaviour
 
     private void OnBattleResolved(BattleResult result)
     {
+        // 戦闘終了後に同じ通知が来ても、勝利数を二重に数えない
         if (phase != Phase.Fighting)
         {
             return;
@@ -199,6 +203,7 @@ public sealed class BossRushRunController : MonoBehaviour
 
         phase = Phase.Reloading;
         retryButton.interactable = false;
+        // シーンを読み直し、対戦相手の抽選と編成を最初からやり直す
         SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Single);
     }
 }

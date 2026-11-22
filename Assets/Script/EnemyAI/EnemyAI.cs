@@ -56,6 +56,7 @@ public class EnemyAI : MonoBehaviour
             .Where(s => s.mpCost <= enemy.mp)
             .Where(s => cooldowns == null || cooldowns.IsReadyAfterTicks(s, cooldownTicksBeforeAction))
             .ToList();
+        // ボスはスキル候補が空でも、現在HPに応じた戦術の解禁を判定する
         if (enemy.data.enemyType == EnemyType.Boss && enemy.data.role == EnemyRole.Tank)
         {
             return tankBossAction.ChooseSkill(enemy, pool, player, allowBossHeavyAttackStance);

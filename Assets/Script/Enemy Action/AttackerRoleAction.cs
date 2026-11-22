@@ -17,7 +17,6 @@ public class AttackerRoleAction : IEnemyRoleAction
                 s => s.skillType == SkillType.Heal
             );
 
-        // HP50%ˆÈ‰º‚È‚çˆê’èŠm—¦‚Å‰ñ•œ
         if (
             hpRate <= 0.5f && 
             healSkill != null &&

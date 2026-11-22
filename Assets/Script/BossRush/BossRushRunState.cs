@@ -3,25 +3,33 @@ using System.Collections.Generic;
 
 internal sealed class BossRushRunState
 {
-    public const int SkillsPerGroup = 2;
-    public const int TotalSkills = SkillsPerGroup * 2;
+    public const int ClassSkillCount = 2;
+    public const int CommonSkillCount = 3;
+    public const int TotalSkills = ClassSkillCount + CommonSkillCount;
     private const int MaxClassChanges = 1;
 
     public PlayerData CurrentPlayer { get; private set; }
-    public IReadOnlyList<SkillData> EquippedSkills { get; private set; } = Array.Empty<SkillData>();
+    public IReadOnlyList<SkillData> SelectedSkills { get; private set; } = Array.Empty<SkillData>();
     public int ClassChangesUsed { get; private set; }
     public int RemainingClassChanges => MaxClassChanges - ClassChangesUsed;
     public bool IsInBattle { get; private set; }
 
     public bool CanChooseClass(PlayerData player)
     {
-        return !IsInBattle && player != null &&
-            (CurrentPlayer == null || CurrentPlayer.role == player.role || RemainingClassChanges > 0);
+        return !IsInBattle && 
+            player != null &&
+            (CurrentPlayer == null || 
+            CurrentPlayer.role == player.role || 
+            RemainingClassChanges > 0);
     }
 
-    public bool TryBeginBattle(PlayerData player, IReadOnlyList<SkillData> classSkills,
-        IReadOnlyList<SkillData> commonSkills, IReadOnlyList<SkillData> classCandidates,
-        IReadOnlyList<SkillData> commonCandidates, out string error)
+    public bool ValidateLoadout(
+        PlayerData player, 
+        IReadOnlyList<SkillData> classSkills,
+        IReadOnlyList<SkillData> commonSkills, 
+        IReadOnlyList<SkillData> classCandidates,
+        IReadOnlyList<SkillData> commonCandidates, 
+        out string error)
     {
         if (IsInBattle)
         {
@@ -41,8 +49,10 @@ internal sealed class BossRushRunState
             return false;
         }
 
-        if (classSkills == null || commonSkills == null ||
-            classSkills.Count != SkillsPerGroup || commonSkills.Count != SkillsPerGroup)
+        if (classSkills == null || 
+            commonSkills == null ||
+            classSkills.Count != ClassSkillCount || 
+            commonSkills.Count != CommonSkillCount)
         {
             error = "固有スキルと自由スキルを2つずつ選んでください。";
             return false;
@@ -50,39 +60,55 @@ internal sealed class BossRushRunState
 
         var equipped = new SkillData[TotalSkills];
         var skillIds = new HashSet<SkillId>();
-        for (int i = 0; i < SkillsPerGroup; i++)
+        for (int i = 0; i < ClassSkillCount; i++)
         {
             SkillData classSkill = classSkills[i];
-            SkillData commonSkill = commonSkills[i];
-            if (!SkillUseRules.IsClassSkill(classSkill, player.role) || !IsRegistered(classSkill, classCandidates))
+
+            if (!SkillUseRules.IsClassSkill(classSkill, player.role) || 
+                !IsSkillRegistered(classSkill, classCandidates))
             {
                 error = "固有枠には、選んだ職業に登録されているスキルを指定してください。";
                 return false;
             }
 
-            if (!SkillUseRules.IsCommonSkill(commonSkill) || !IsRegistered(commonSkill, commonCandidates))
-            {
-                error = "自由枠には、登録されている共通スキルを指定してください。";
-                return false;
-            }
-
-            if (!skillIds.Add(classSkill.id) || !skillIds.Add(commonSkill.id))
+            if (!skillIds.Add(classSkill.id))
             {
                 error = "同じスキルを複数の枠に編成することはできません。";
                 return false;
             }
 
             equipped[i] = classSkill;
-            equipped[i + SkillsPerGroup] = commonSkill;
         }
 
+        for (int i = 0; i < CommonSkillCount; i++)
+        {
+            SkillData commonSkill = commonSkills[i];
+
+            if (!SkillUseRules.IsCommonSkill(commonSkill) ||
+                !IsSkillRegistered(commonSkill, commonCandidates))
+            {
+                error = "自由枠には、登録されている共通スキルを指定してください。";
+                return false;
+            }
+
+            if (!skillIds.Add(commonSkill.id))
+            {
+                error = "同じスキルを複数の枠に編成することはできません。";
+                return false;
+            }
+
+            // 戦闘のスキル欄でも固有枠が先に並ぶよう、自由枠はその後ろに詰める
+            equipped[i + ClassSkillCount] = commonSkill;
+        }
+
+        // 編成の検証をすべて通過してから、職業変更回数と編成を確定する
         if (CurrentPlayer != null && CurrentPlayer.role != player.role)
         {
             ClassChangesUsed++;
         }
 
         CurrentPlayer = player;
-        EquippedSkills = Array.AsReadOnly(equipped);
+        SelectedSkills = Array.AsReadOnly(equipped);
         IsInBattle = true;
         error = string.Empty;
         return true;
@@ -93,7 +119,9 @@ internal sealed class BossRushRunState
         IsInBattle = false;
     }
 
-    private static bool IsRegistered(SkillData skill, IReadOnlyList<SkillData> candidates)
+    private static bool IsSkillRegistered(
+        SkillData skill, 
+        IReadOnlyList<SkillData> candidates)
     {
         foreach (SkillData candidate in candidates)
         {

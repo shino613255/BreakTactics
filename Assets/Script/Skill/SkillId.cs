@@ -1,5 +1,6 @@
 public enum SkillId
 {
+    // 数値で保存されたスキルIDを保つため、既存の並びは固定する
     None = 0,
     Warrior_BreakSlash,
     Warrior_GuardSlash,

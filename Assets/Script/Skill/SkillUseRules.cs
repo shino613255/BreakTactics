@@ -13,7 +13,7 @@ public static class SkillUseRules
         return skill != null && (skill.id == SkillId.None || IsClassSkill(skill, role) || IsCommonSkill(skill));
     }
 
-    // 追加
+    // 固有枠と自由枠の判定はSkillIdの連続した範囲に依存する
     public static bool IsClassSkill(SkillData skill, PlayerRole role)
     {
         if (skill == null)
@@ -34,7 +34,6 @@ public static class SkillUseRules
         }
     }
 
-    // 追加
     public static bool IsCommonSkill(SkillData skill)
     {
         return skill != null && skill.id >= SkillId.Common_Guard && skill.id <= SkillId.Common_PartProbe;

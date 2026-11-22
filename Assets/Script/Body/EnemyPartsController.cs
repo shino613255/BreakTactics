@@ -47,6 +47,7 @@ public class EnemyPartsController : MonoBehaviour
             result.damageMultiplier = enemy.data.GetPartDamageMultiplier(selectedPart.partType, attackType);
         }
 
+        // 弱点・耐性は本体と部位の両方に効く。障壁は本体、狙いのダメージ補正は部位だけに適用する
         float adjustedDamage = ctx.baseDamage * result.damageMultiplier;
         result.mainDamage = Mathf.RoundToInt(adjustedDamage * ctx.mainDamageRate);
         result.mainDamage = enemy.TakeDirectDamage(result.mainDamage);

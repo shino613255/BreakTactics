@@ -5,6 +5,7 @@ public static class ExpansionEnemyAction
 {
     private const int HandsRequiredToSealChargedAxe = 2;
     private const float RenewalHpThreshold = 0.6f;
+    // 候補選択時にも実際の支払いと同じHPコストで生存を判定するため、SkillUseRulesと値をそろえる
     private const float BloodFuryHpCostRate = 0.08f;
 
     public static bool UsesCharge(EnemyManager enemy) => enemy != null && enemy.data != null &&

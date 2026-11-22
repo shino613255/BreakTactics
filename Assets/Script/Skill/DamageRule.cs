@@ -11,6 +11,7 @@ public static class DamageRule
         return CalcPhysical(atk, def, NormalAttackPower);
     }
 
+    // 防御・魔法防御が0のユニットもいるため、ダメージ計算の分母は最低1にする
     public static int CalcPhysical(int atk, int def, int skillPower)
     {
         float safeDef = Mathf.Max(1, def);

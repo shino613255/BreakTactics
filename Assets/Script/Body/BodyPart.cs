@@ -196,14 +196,13 @@ public class BodyPart : MonoBehaviour
         if (!highlight.enabled)
             return;
 
-        // 選択中は部位種別に関係なく白く表示する
+        // 選択中の部位が分かるよう、部位確認用の色より白を優先する
         if (isSelected)
         {
             highlight.color = new Color(1f, 1f, 1f, 0.7f);
             return;
         }
 
-        // 部位確認モード
         switch (partType)
         {
             case PartType.Face:

@@ -36,6 +36,7 @@ public class EnemyData : ScriptableObject
     
     public List<SkillData> skillList = new();       
 
+    // 予告対象は参照で照合するため、skillListにも同じスキルアセットを登録する
     [Header("攻撃予告")]
     public SkillData AnnouncementSkillName;
 

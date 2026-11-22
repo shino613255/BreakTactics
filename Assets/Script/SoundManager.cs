@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    // SoundManagerのPrefabでは戦闘BGMをAudioClipsBGMの4番目に登録する
     private const int BattleBgmIndex = 3;
 
     public static SoundManager instance;

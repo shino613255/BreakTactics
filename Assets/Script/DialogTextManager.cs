@@ -25,8 +25,10 @@ public class DialogTextManager : MonoBehaviour
     private int lastAdvanceFrame = -1;
     private bool isAdvancePointerHeld;
     private int lastAdvanceReleaseFrame = -1;
+    // 表示内容が差し替わったら、古いメッセージの表示待ちを打ち切る
     private int displayVersion;
 
+    // 会話送りに使ったクリックは、マウスを離したフレームまで戦闘入力に回さない
     public bool ConsumedClickThisFrame =>
         lastAdvanceFrame == Time.frameCount ||
         lastAdvanceReleaseFrame == Time.frameCount ||
@@ -129,7 +131,6 @@ public class DialogTextManager : MonoBehaviour
         SetNextLine();
     }
 
-    // 追加
     public void Clear()
     {
         displayVersion++;

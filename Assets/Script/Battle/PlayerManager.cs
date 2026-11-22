@@ -28,7 +28,7 @@ public class PlayerManager : UnitBase
 
     public bool IsPoisoned => isPoisoned;
 
-    internal void Setup(PlayerData data, IReadOnlyList<SkillData> equippedSkills)
+    internal void Setup(PlayerData data, IReadOnlyList<SkillData> SelectedSkills)
     {
         ResetBattleState();
 
@@ -37,6 +37,7 @@ public class PlayerManager : UnitBase
         {
             cooldowns = gameObject.AddComponent<SkillCooldowns>();
         }
+        // 同じプレイヤーを次の戦闘でも使うため、前戦のクールダウンを持ち越さない
         cooldowns.Clear();
 
         if (data == null)
@@ -60,8 +61,7 @@ public class PlayerManager : UnitBase
         this.mag = data.startMag;
         this.def = data.startDef;
         this.mdef = data.startMdef;
-        // 追加
-        currentSkills = equippedSkills;
+        currentSkills = SelectedSkills;
 
         UpdateSkillPanel();
     }

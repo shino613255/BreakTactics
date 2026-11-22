@@ -318,7 +318,6 @@ public class EnemyManager : UnitBase
         }
     }
 
-    // 追加
     private bool initialized;
 
     public void Setup(EnemyData enemyData)
@@ -331,7 +330,7 @@ public class EnemyManager : UnitBase
 
     private void Start()
     {
-        // 追加
+        // 生成直後にSetupで初期化済みなら、StartでHPや能力値を戻さない
         if (initialized)
         {
             return;
@@ -360,7 +359,6 @@ public class EnemyManager : UnitBase
         evasionRate = data.evasionRate;
         damageEffect = data.damageEffect;
 
-        // 追加
         initialized = true;
     }
 
@@ -389,6 +387,7 @@ public class EnemyManager : UnitBase
         DOTween.Kill(transform);
     }
 
+    // 敵の破棄は戦闘終了処理に任せ、勝敗確定まで参照を残す
     public void TakeDamageRaw(int damage)
     {
         damage = Mathf.Max(1, damage);

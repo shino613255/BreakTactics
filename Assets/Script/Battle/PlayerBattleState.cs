@@ -42,6 +42,7 @@ public sealed class PlayerBattleState
 
     public bool LearnTechnique(PlayerRole role, BodyPart part)
     {
+        // 左右の手は同じ戦技なので、破壊した部位の種類で重複を防ぐ
         return role == PlayerRole.Warrior && part != null && part.canBreak && part.IsBroken && part.partType != PartType.Belly &&
             learnedTechniques.Add(part.partType);
     }
@@ -60,6 +61,7 @@ public sealed class PlayerBattleState
 
     public void EndPlayerTurn()
     {
+        // 使用したターンの追加行動にも使えるよう、狙いは次のプレイヤーターン終了まで残す
         if (IsAiming && playerTurn > aimGrantedTurn)
         {
             IsAiming = false;
@@ -68,6 +70,7 @@ public sealed class PlayerBattleState
 
     public void EndEnemyAction() => GuardReduction = 0f;
 
+    // 堅守と守りの一閃が重なったときは、強い方の軽減率を使う
     public void GrantGuard(float reduction) => GuardReduction = Mathf.Max(GuardReduction, reduction);
 
     public void GrantAim()

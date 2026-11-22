@@ -61,6 +61,7 @@ public static class SkillExecutor
             return result;
         }
 
+        // 血気は物理攻撃の試行で消費するため、命中判定より先に倍率を確定する
         float attackMultiplier = skill.skillType == SkillType.Physical && attacker is EnemyManager boostedEnemy
             ? boostedEnemy.BattleEffects.ConsumePhysicalMultiplier()
             : 1f;

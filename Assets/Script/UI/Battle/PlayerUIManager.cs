@@ -33,6 +33,7 @@ public class PlayerUIManager : MonoBehaviour
             return worldCamera.ViewportToWorldPoint(new Vector3(.15f, .35f, depth));
         }
 
+        // ワールド空間の演出を立ち絵に重ねるため、いったん画面座標を経由する
         Vector2 screen = RectTransformUtility.WorldToScreenPoint(
             canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
             portrait.TransformPoint(portrait.rect.center));

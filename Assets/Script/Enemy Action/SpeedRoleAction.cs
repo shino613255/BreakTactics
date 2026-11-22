@@ -14,7 +14,6 @@ public class SpeedRoleAction : IEnemyRoleAction
             return null;
         }
 
-        // 40%の確率でスキルを使用
         if (Random.value < 0.4f)
         {
             return pool[
