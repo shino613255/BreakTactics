@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    // SoundManagerのPrefabでは戦闘BGMをAudioClipsBGMの4番目に登録する
     private const int BattleBgmIndex = 3;
-
     public static SoundManager instance;
 
     private void Awake()
@@ -33,15 +31,25 @@ public class SoundManager : MonoBehaviour
         AudioSourceBGM.Stop();
     }
 
-    public void PlayBattleBGM()
+    public void PlayBattleBGM(AudioClip clip = null)
     {
         AudioSourceBGM.Stop();
-        AudioSourceBGM.clip = AudioClipsBGM[BattleBgmIndex];
+        AudioSourceBGM.clip = clip != null 
+            ? clip 
+            : AudioClipsBGM[BattleBgmIndex];
         AudioSourceBGM.Play();
     }
 
     public void PlayButtonSE(int index)
     {
         AudioSourceSE.PlayOneShot(ButtonSE[index]); 
+    }
+    public void PlaySkillSE(SkillData skill)
+    {
+        if(skill == null || skill.se == null)
+        {
+            return;
+        }
+        AudioSourceSE.PlayOneShot(skill.se);
     }
 }

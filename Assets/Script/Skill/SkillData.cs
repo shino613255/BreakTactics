@@ -56,4 +56,7 @@ public class SkillData : ScriptableObject
     public DebuffData debuff;
     [Range(0f, 1f)]
     public float applyChance = 0.3f;
+
+    [Header("効果音")]
+    public AudioClip se;
 }

@@ -68,4 +68,7 @@ public class EnemyData : ScriptableObject
 
     [Header("敵の役割（戦い方のタイプ）")]
     public EnemyRole role = EnemyRole.Attacker;
+
+    [Header("BGM")]
+    public AudioClip Battlebgm;
 }

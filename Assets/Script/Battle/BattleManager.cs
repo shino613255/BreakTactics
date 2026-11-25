@@ -122,7 +122,8 @@ public class BattleManager : MonoBehaviour
         skillButton.SetActive(true);
         playerStatusPanel.SetActive(true);
         playerInputBlockedThroughFrame = Time.frameCount;
-        SoundManager.instance.PlayBattleBGM();
+        //SoundManager.instance.PlayBattleBGM();
+        SoundManager.instance.PlayBattleBGM(enemymanager.data != null ? enemymanager.data.Battlebgm : null);
 
         enemyUI.gameObject.SetActive(true);
         enemy = enemymanager;
@@ -628,9 +629,9 @@ public class BattleManager : MonoBehaviour
 
         return wasBroken ? "‚±‚Ì•”ˆÊ‚Í”j‰óÏ‚İB\nÄUŒ‚‚Å‚Í–WŠQ‚Å‚«‚È‚¢B" : string.Empty;
     }
-
     public void PlaySkillEffect(SkillData skill, Vector3 worldPos)
     {
+        SoundManager.instance.PlaySkillSE(skill);
         SkillVfx.Play(skill, worldPos);
     }
 
@@ -1172,7 +1173,11 @@ public class BattleManager : MonoBehaviour
         enemyUI.UpdateUI(enemy);
         if (result.hit && skill.targetType != TargetType.Self)
         {
-            SoundManager.instance.PlayButtonSE(1);
+            if (skill.se == null)
+            {
+                SoundManager.instance.PlayButtonSE(1);
+            }
+
             ShakeScreen();
         }
 
