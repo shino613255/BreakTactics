@@ -1,9 +1,0 @@
-{
-  "name": "BreakTactics.Expansion.PlayModeTests",
-  "references": ["Unity.TextMeshPro", "UnityEngine.UI"],
-  "optionalUnityReferences": ["TestAssemblies"],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "autoReferenced": false,
-  "defineConstraints": ["UNITY_INCLUDE_TESTS"]
-}

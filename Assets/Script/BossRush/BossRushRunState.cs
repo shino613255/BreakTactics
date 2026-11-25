@@ -54,7 +54,7 @@ internal sealed class BossRushRunState
             classSkills.Count != ClassSkillCount || 
             commonSkills.Count != CommonSkillCount)
         {
-            error = "固有スキルと自由スキルを2つずつ選んでください。";
+            error = $"固有スキルを{ClassSkillCount}つ、自由スキルを{CommonSkillCount}つ選んでください。";
             return false;
         }
 

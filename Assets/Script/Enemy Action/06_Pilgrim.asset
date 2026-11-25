@@ -26,11 +26,11 @@ MonoBehaviour:
   deathEffect: {fileID: 0}
   hitSE: {fileID: 0}
   deathSE: {fileID: 0}
-  attackSkill: {fileID: 11400000, guid: bda7148bf13a3944f82fc3374bfe687b, type: 2}
   skillList:
+  - {fileID: 11400000, guid: bda7148bf13a3944f82fc3374bfe687b, type: 2}
   - {fileID: 11400000, guid: d7db39567b7bb5a41ab14a382bbbde7f, type: 2}
   - {fileID: 11400000, guid: 036444af6cd5a99458bf2ddc2aada712, type: 2}
-  telegraphedSkill: {fileID: 0}
+  AnnouncementSkillName: {fileID: 0}
   enableStagger: 0
   staggerWeakPoint: 0
   staggerGaugeMax: 100
